@@ -1,5 +1,6 @@
-import { prismaObject } from '@src/lib/prisma'
+import { IUsersRepository } from '@src/repositories/users-repository'
 import { hash } from 'bcryptjs'
+import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 
 interface IRegisterService {
   name: string
@@ -8,19 +9,15 @@ interface IRegisterService {
 }
 
 export class RegisterService {
-  constructor(private usersRepository: any) {}
+  constructor(private usersRepository: IUsersRepository) {}
 
   async execute({ name, email, password }: IRegisterService) {
     const AMOUNT_OF_TIME_TO_GENERATE_HASE = 3
     const passwordHash = await hash(password, AMOUNT_OF_TIME_TO_GENERATE_HASE)
-    const userAlreadyExists = await prismaObject.user.findUnique({
-      where: {
-        email,
-      },
-    })
+    const userAlreadyExists = await this.usersRepository.findByEmail(email)
 
     if (userAlreadyExists) {
-      throw new Error(`User ${userAlreadyExists} is already registered`)
+      throw new UserAlreadyExistsError()
     }
     const data = {
       name,
