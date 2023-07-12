@@ -2,6 +2,7 @@ import { IUsersRepository } from '@src/repositories/users-repository'
 import { hash } from 'bcryptjs'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 import { User } from '@prisma/client'
+import { AMOUNT_OF_TIME_TO_GENERATE_HASE } from '@src/const'
 
 interface IRegisterService {
   name: string
@@ -21,7 +22,6 @@ export class RegisterService {
     email,
     password,
   }: IRegisterService): Promise<IRegisterServiceResponse> {
-    const AMOUNT_OF_TIME_TO_GENERATE_HASE = 3
     const passwordHash = await hash(password, AMOUNT_OF_TIME_TO_GENERATE_HASE)
     const userAlreadyExists = await this.usersRepository.findByEmail(email)
 

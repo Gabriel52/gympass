@@ -1,0 +1,1 @@
+export const AMOUNT_OF_TIME_TO_GENERATE_HASE = 3

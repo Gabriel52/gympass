@@ -1,7 +1,7 @@
 {
   "name": "api-solid",
   "version": "1.0.0",
-  "description": "api to menager gyms\"",
+  "description": "api to manager gyms",
   "main": "index.js",
   "scripts": {
     "start:dev": "tsx watch src/server.ts",
@@ -9,7 +9,8 @@
     "build": "tsup src --out-dir build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui --api 9527"
   },
   "author": "",
   "license": "ISC",
