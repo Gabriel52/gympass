@@ -1,15 +1,21 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { RegisterService } from './register'
 import { compare } from 'bcryptjs'
-import { InMemoryUsersRepository } from '@src/repositories/in-memory/in-memory-users-tepository'
+import { InMemoryUsersRepository } from '@src/repositories/in-memory/in-memory-users-repository'
+
 import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 
+let userRepository: InMemoryUsersRepository
+let sut: RegisterService
 describe('Register Service', () => {
+  beforeEach(() => {
+    userRepository = new InMemoryUsersRepository()
+    sut = new RegisterService(userRepository)
+  })
+
   it('should be able to register a user', async () => {
-    const userRepository = new InMemoryUsersRepository()
-    const registerService = new RegisterService(userRepository)
     const password = '123424'
-    const { user } = await registerService.execute({
+    const { user } = await sut.execute({
       name: 'John Doe',
       email: 'johndoe@example.com',
       password,
@@ -18,10 +24,8 @@ describe('Register Service', () => {
   })
 
   it('should hash user password upon registration', async () => {
-    const userRepository = new InMemoryUsersRepository()
-    const registerService = new RegisterService(userRepository)
     const password = '123424'
-    const { user } = await registerService.execute({
+    const { user } = await sut.execute({
       name: 'John Doe',
       email: 'johndoe@example.com',
       password,
@@ -34,16 +38,14 @@ describe('Register Service', () => {
   })
 
   it("shouldn't be able to register a user with same email", async () => {
-    const userRepository = new InMemoryUsersRepository()
-    const registerService = new RegisterService(userRepository)
     const email = 'johndoe@example.com'
-    await registerService.execute({
+    await sut.execute({
       name: 'John Doe',
       email,
       password: '124324324324',
     })
     await expect(() =>
-      registerService.execute({
+      sut.execute({
         name: 'John Doe',
         email,
         password: '124324324324',

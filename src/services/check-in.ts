@@ -1,0 +1,49 @@
+import { CheckIn } from '@prisma/client'
+import { ICheckInsService } from '@src/repositories/check-ins-repository'
+import { IGymsRepository } from '@src/repositories/gyms-repository'
+import { ResourceNotFoundError } from './errors/resource-not-found-error'
+
+interface CheckInServiceResponse {
+  userId: string
+  gymId: string
+  userLatitude: number
+  userLongitude: number
+}
+
+interface CheckInServiceRequest {
+  checkIn: CheckIn
+}
+
+export class CheckInService {
+  constructor(
+    private checkInsRepository: ICheckInsService,
+    private gymsRepository: IGymsRepository,
+  ) {}
+
+  async execute({
+    userId,
+    gymId,
+  }: CheckInServiceResponse): Promise<CheckInServiceRequest> {
+    const gym = await this.gymsRepository.findById(gymId)
+    if (!gym) {
+      throw new ResourceNotFoundError()
+    }
+
+    // calculate distance between user and gym
+
+    const checkInOnSameDate = await this.checkInsRepository.findByUserIdOnDate(
+      userId,
+      new Date(),
+    )
+
+    if (checkInOnSameDate) {
+      throw new Error('')
+    }
+
+    const checkIn = await this.checkInsRepository.create({
+      gym_id: gymId,
+      user_id: userId,
+    })
+    return { checkIn }
+  }
+}
