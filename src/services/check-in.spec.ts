@@ -17,8 +17,8 @@ describe('CheckIn Service', () => {
       id: 'gym-01',
       title: 'Academia das maravilhas',
       description: 'Onde você malha todo dia',
-      latitude: new Decimal(0),
-      longitude: new Decimal(0),
+      latitude: new Decimal(23213213),
+      longitude: new Decimal(23213213213),
       phone: '123324324',
     })
     vi.useFakeTimers()
@@ -34,7 +34,6 @@ describe('CheckIn Service', () => {
       userLatitude: 23213213,
       userLongitude: 23213213213,
     })
-    console.log(checkIn.created_at)
     await expect(checkIn.id).toEqual(expect.any(String))
   })
   it('should not be able to check in twice in the same day', async () => {
@@ -73,5 +72,23 @@ describe('CheckIn Service', () => {
     })
 
     await expect(checkIn.id).toEqual(expect.any(String))
+  })
+  it('should not be able to check in on distant gym ', async () => {
+    gymsRepository.items.push({
+      id: 'gym-02',
+      title: 'Academia das maravilhas',
+      description: 'Onde você malha todo dia',
+      latitude: new Decimal(-23.652092),
+      longitude: new Decimal(-46.8275333),
+      phone: '123324324',
+    })
+    await expect(() =>
+      sut.execute({
+        gymId: 'gym-02',
+        userId: 'user-01',
+        userLatitude: -23.5425113,
+        userLongitude: -46.6541346,
+      }),
+    ).rejects.toBeInstanceOf(Error)
   })
 })
