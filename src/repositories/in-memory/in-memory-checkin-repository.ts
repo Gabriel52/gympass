@@ -35,7 +35,11 @@ export class InMemoryCheckInsRepository implements ICheckInsService {
       created_at: new Date(),
     }
     this.items.push(checkIn)
-
+    console.log(checkIn)
     return checkIn
+  }
+
+  async findManyByUserId(userId: string): Promise<CheckIn[]> {
+    return this.items.filter((item) => item.user_id === userId)
   }
 }
