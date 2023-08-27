@@ -45,4 +45,8 @@ export class InMemoryCheckInsRepository implements ICheckInsService {
       .filter((item) => item.user_id === userId)
       .slice((page - 1) * PAGINATION_LIMIT, page * PAGINATION_LIMIT)
   }
+
+  async countByUserId(userId: string): Promise<number> {
+    return this.items.filter((item) => item.user_id === userId).length
+  }
 }

@@ -21,7 +21,6 @@ export class FetchUserCheckInsHistoryService {
       userId,
       page,
     )
-    console.log(`service: ${userId}`, checkIns)
     return { checkIns }
   }
 }
