@@ -8,15 +8,6 @@ describe('Fetch user check ins history Service', () => {
   beforeEach(async () => {
     checkInsRepository = new InMemoryCheckInsRepository()
     sut = new FetchUserCheckInsHistoryService(checkInsRepository)
-
-    // await gymsRepository.create({
-    //   id: 'gym-01',
-    //   title: 'Academia das maravilhas',
-    //   description: 'Onde você malha todo dia',
-    //   phone: '123324324',
-    //   latitude: new Decimal(23213213),
-    //   longitude: new Decimal(23213213213),
-    // })
   })
 
   it('should be able to check in history ', async () => {
