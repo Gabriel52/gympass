@@ -1,10 +1,10 @@
 import { CheckIn, Prisma } from '@prisma/client'
-import { ICheckInsService } from '../check-ins-repository'
+import { ICheckInsRepository } from '../check-ins-repository'
 import { randomUUID } from 'node:crypto'
 import dayjs from 'dayjs'
 import { PAGINATION_LIMIT } from '@src/const'
 
-export class InMemoryCheckInsRepository implements ICheckInsService {
+export class InMemoryCheckInsRepository implements ICheckInsRepository {
   public items: CheckIn[] = []
 
   async findByUserIdOnDate(
@@ -46,7 +46,26 @@ export class InMemoryCheckInsRepository implements ICheckInsService {
       .slice((page - 1) * PAGINATION_LIMIT, page * PAGINATION_LIMIT)
   }
 
+  async findById(id: string): Promise<CheckIn | null> {
+    const checkIn = this.items.find((item) => item.id === id)
+
+    if (!checkIn) {
+      return null
+    }
+    return checkIn
+  }
+
   async countByUserId(userId: string): Promise<number> {
     return this.items.filter((item) => item.user_id === userId).length
+  }
+
+  async save(checkIn: CheckIn): Promise<CheckIn> {
+    const checkInIndex = this.items.findIndex((item) => item.id === checkIn.id)
+
+    if (checkInIndex >= 0) {
+      this.items[checkInIndex] = checkIn
+    }
+
+    return checkIn
   }
 }
